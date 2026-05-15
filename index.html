@@ -252,6 +252,34 @@
   }
   @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.02);} }
 
+
+  .gcal-btn {
+    margin-top: 16px;
+    background: linear-gradient(135deg, #4285f4, #34a853);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 800;
+    cursor: pointer;
+    width: 100%;
+    transition: transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 14px rgba(66,133,244,0.3);
+  }
+  .gcal-btn:hover { transform: scale(1.02); box-shadow: 0 6px 20px rgba(66,133,244,0.4); }
+  .lock-time-warning {
+    background: #fff8e7;
+    border: 1.5px solid #f9d0a0;
+    border-radius: 12px;
+    padding: 12px;
+    margin-top: 10px;
+    font-size: 0.82rem;
+    color: #b07020;
+    text-align: center;
+    line-height: 1.6;
+  }
   button:focus { outline: 2px solid var(--pink); outline-offset: 2px; }
 </style>
 </head>
@@ -321,6 +349,7 @@
         <input class="pin-digit" id="p3" maxlength="1" type="number" min="0" max="9" inputmode="numeric" oninput="onPin(3)" />
       </div>
       <div class="pin-hint-text">Hint: her birthday month & day (MMDD) 💡</div>
+      <div class="lock-time-warning" id="lockTimeWarning" style="display:none;"></div>
     </div>
     <div class="wish-reveal" id="wishReveal">
       <div class="wish-emoji">🎁✨🎂</div>
@@ -331,7 +360,15 @@
       Here's to you — the most wonderful person in my world. 
       I love you more than all the stars and balloons in the sky! 🎈⭐<br><br>
       Happy Birthday, Gole! 💖</p>
+      <button class="gcal-btn" onclick="addToCalendar()">📅 Add Birthday Reminder to Google Calendar</button>
     </div>
+  </div>
+
+  <!-- Calendar Card - always visible -->
+  <div class="card" style="animation-delay:0.5s;">
+    <div class="card-title">📅 Set a Birthday Reminder!</div>
+    <p style="font-size:0.88rem;color:var(--soft);margin-bottom:16px;line-height:1.6;">Don't miss wishing Gole at midnight on May 26th! Add a reminder to your Google Calendar right now 💕</p>
+    <button class="gcal-btn" onclick="addToCalendar()">📅 Add Reminder to Google Calendar</button>
   </div>
 
   <div class="footer">Made with <span>💖</span> just for Gole</div>
@@ -504,15 +541,61 @@ function onPin(idx){
   if(val && idx<3) document.getElementById('p'+(idx+1)).focus();
   checkPin();
 }
+function isBirthdayUnlocked(){
+  const now = new Date();
+  const unlock = new Date(now.getFullYear(), 4, 26, 0, 0, 0); // May 26 midnight
+  return now >= unlock;
+}
+
+function getTimeUntilUnlock(){
+  const now = new Date();
+  const unlock = new Date(now.getFullYear(), 4, 26, 0, 0, 0);
+  const diff = unlock - now;
+  if(diff <= 0) return null;
+  const days = Math.floor(diff/86400000);
+  const hours = Math.floor((diff%86400000)/3600000);
+  const mins = Math.floor((diff%3600000)/60000);
+  const secs = Math.floor((diff%60000)/1000);
+  let parts = [];
+  if(days > 0) parts.push(days+'d');
+  if(hours > 0) parts.push(hours+'h');
+  if(mins > 0) parts.push(mins+'m');
+  parts.push(secs+'s');
+  return parts.join(' ');
+}
+
 function checkPin(){
   let code='';
   for(let i=0;i<4;i++) code+=document.getElementById('p'+i).value;
   if(code.length===4){
     if(code===SECRET){
-      document.getElementById('lockArea').style.display='none';
-      document.getElementById('wishReveal').style.display='block';
-      launchConfetti();
-      setTimeout(launchConfetti,800);
+      if(!isBirthdayUnlocked()){
+        // correct code but too early — show time remaining
+        const warn = document.getElementById('lockTimeWarning');
+        const t = getTimeUntilUnlock();
+        warn.style.display='block';
+        warn.innerHTML='⏰ Almost! The wish unlocks at midnight on May 26th.<br><span style="font-family:Pacifico,cursive;color:var(--pink);font-size:1.1rem;">'+t+' to go...</span>';
+        for(let i=0;i<4;i++){
+          const el=document.getElementById('p'+i);
+          el.style.borderColor='#f59e0b';
+          setTimeout(()=>{ el.style.borderColor=''; el.value=''; },1000);
+        }
+        setTimeout(()=>document.getElementById('p0').focus(),1050);
+        // live countdown in warning
+        if(window._warnInterval) clearInterval(window._warnInterval);
+        window._warnInterval = setInterval(()=>{
+          const t2 = getTimeUntilUnlock();
+          if(!t2){ clearInterval(window._warnInterval); checkUnlockAuto(); return; }
+          warn.innerHTML='⏰ Almost! The wish unlocks at midnight on May 26th.<br><span style="font-family:Pacifico,cursive;color:var(--pink);font-size:1.1rem;">'+t2+' to go...</span>';
+        },1000);
+      } else {
+        // correct and time is right!
+        if(window._warnInterval) clearInterval(window._warnInterval);
+        document.getElementById('lockArea').style.display='none';
+        document.getElementById('wishReveal').style.display='block';
+        launchConfetti();
+        setTimeout(launchConfetti,800);
+      }
     } else {
       for(let i=0;i<4;i++){
         const el=document.getElementById('p'+i);
@@ -522,6 +605,26 @@ function checkPin(){
       setTimeout(()=>document.getElementById('p0').focus(),750);
     }
   }
+}
+
+function checkUnlockAuto(){
+  // auto unlock if pin was already correct and time just hit midnight
+  let code='';
+  for(let i=0;i<4;i++) code+=document.getElementById('p'+i).value;
+  if(isBirthdayUnlocked()){
+    document.getElementById('lockArea').style.display='none';
+    document.getElementById('wishReveal').style.display='block';
+    launchConfetti();
+    setTimeout(launchConfetti,800);
+  }
+}
+
+function addToCalendar(){
+  const title = encodeURIComponent("🎂 Gole's Birthday! Wish her at midnight!");
+  const details = encodeURIComponent("Time to wish Gole a Happy Birthday! You set this reminder on her special birthday website 💕");
+  const dates = "20260526T000000/20260526T010000";
+  const url = "https://calendar.google.com/calendar/render?action=TEMPLATE&text="+title+"&dates="+dates+"&details="+details+"&sf=true&output=xml";
+  window.open(url, '_blank');
 }
 // Allow Enter key on pin
 document.querySelectorAll('.pin-digit').forEach(el=>{
