@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday Gole! 🎈</title>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #ff6fb0;
+    --peach: #ffb347;
+    --yellow: #ffe066;
+    --mint: #7ee8c2;
+    --lilac: #c9aaff;
+    --bg: #fff5fb;
+    --card: #fffafc;
+    --text: #3a1a2e;
+    --soft: #c97ab2;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* Floating emojis background */
+  .floaters { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+  .floater {
+    position: absolute;
+    font-size: 1.5rem;
+    animation: floatUp linear infinite;
+    opacity: 0.18;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(110vh) rotate(0deg); opacity: 0.18; }
+    100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* Confetti burst */
+  .confetti-wrap { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+  .conf {
+    position: absolute;
+    width: 8px; height: 14px;
+    border-radius: 2px;
+    animation: confFall 2.5s ease-in forwards;
+    opacity: 0;
+  }
+  @keyframes confFall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  .page { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; padding: 0 16px 60px; }
+
+  /* Header */
+  .hero {
+    text-align: center;
+    padding: 48px 0 32px;
+    animation: fadeDown 0.8s ease both;
+  }
+  @keyframes fadeDown { from { opacity:0; transform:translateY(-30px); } to { opacity:1; transform:none; } }
+  .hero-emoji { font-size: 4rem; display: block; animation: bounce 1.2s infinite; }
+  @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-14px);} }
+  .hero h1 {
+    font-family: 'Pacifico', cursive;
+    font-size: 2.6rem;
+    background: linear-gradient(135deg, var(--pink), var(--peach), var(--lilac));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.2;
+    margin: 12px 0 6px;
+  }
+  .hero p { color: var(--soft); font-size: 1rem; font-weight: 600; }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border-radius: 24px;
+    border: 2px solid #f9d0e8;
+    padding: 24px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 24px rgba(255,111,176,0.10);
+    animation: fadeUp 0.7s ease both;
+  }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(30px);} to{opacity:1;transform:none;} }
+  .card:nth-child(2) { animation-delay: 0.1s; }
+  .card:nth-child(3) { animation-delay: 0.2s; }
+  .card:nth-child(4) { animation-delay: 0.3s; }
+  .card:nth-child(5) { animation-delay: 0.4s; }
+  .card-title {
+    font-family: 'Pacifico', cursive;
+    font-size: 1.2rem;
+    color: var(--pink);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Countdown */
+  .countdown-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 4px;
+  }
+  .countdown-item {
+    text-align: center;
+    background: linear-gradient(135deg, #ffeef8, #fff5e0);
+    border-radius: 16px;
+    padding: 14px 4px 10px;
+    border: 1.5px solid #f9d0e8;
+  }
+  .countdown-num {
+    font-family: 'Pacifico', cursive;
+    font-size: 2rem;
+    color: var(--pink);
+    line-height: 1;
+  }
+  .countdown-label { font-size: 0.7rem; color: var(--soft); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
+
+  /* Music player */
+  .player {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: linear-gradient(135deg, #fff0f7, #f3eeff);
+    border-radius: 18px;
+    padding: 14px 16px;
+    border: 1.5px solid #e8d0f9;
+  }
+  .play-btn {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--pink), var(--lilac));
+    border: none;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 1.4rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 14px rgba(255,111,176,0.35);
+  }
+  .play-btn:hover { transform: scale(1.08); box-shadow: 0 6px 20px rgba(255,111,176,0.45); }
+  .player-info { flex: 1; }
+  .player-title { font-weight: 800; font-size: 0.95rem; color: var(--text); }
+  .player-sub { font-size: 0.78rem; color: var(--soft); margin-top: 2px; }
+  .progress-bar { height: 4px; background: #f0d0e8; border-radius: 4px; margin-top: 8px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--pink), var(--lilac)); border-radius: 4px; width: 0%; transition: width 0.5s linear; }
+  .player-note { font-size: 0.78rem; color: #b07aa0; margin-top: 10px; text-align: center; }
+
+  /* Quiz */
+  .quiz-question { font-weight: 700; font-size: 1rem; color: var(--text); margin-bottom: 14px; min-height: 40px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+  .quiz-opt {
+    background: #fff0f8;
+    border: 1.5px solid #f0c8e0;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    color: var(--text);
+  }
+  .quiz-opt:hover { background: #ffe0f2; border-color: var(--pink); }
+  .quiz-opt.correct { background: #d4f7e8; border-color: #3dcb8a; color: #1a6642; }
+  .quiz-opt.wrong { background: #fde8e8; border-color: #f87171; color: #991b1b; }
+  .quiz-progress { display: flex; gap: 6px; margin-bottom: 14px; }
+  .quiz-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #f0c8e0; transition: background 0.3s;
+  }
+  .quiz-dot.done { background: var(--pink); }
+  .quiz-result { text-align: center; padding: 12px 0; }
+  .quiz-result .score { font-family: 'Pacifico', cursive; font-size: 2.2rem; color: var(--pink); }
+  .quiz-result p { color: var(--soft); font-size: 0.9rem; margin-top: 6px; }
+  .quiz-next {
+    display: none;
+    margin-top: 12px;
+    background: linear-gradient(135deg, var(--pink), var(--peach));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 24px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 800;
+    cursor: pointer;
+    width: 100%;
+    transition: transform 0.15s;
+  }
+  .quiz-next:hover { transform: scale(1.02); }
+
+  /* Unlock wish */
+  .lock-area { text-align: center; padding: 10px 0; }
+  .lock-icon { font-size: 3.5rem; cursor: pointer; display: inline-block; transition: transform 0.2s; animation: wiggle 2s infinite; }
+  @keyframes wiggle { 0%,100%{transform:rotate(0);} 20%{transform:rotate(-8deg);} 40%{transform:rotate(8deg);} 60%{transform:rotate(-5deg);} 80%{transform:rotate(5deg);} }
+  .lock-hint { color: var(--soft); font-size: 0.85rem; font-weight: 600; margin-top: 8px; }
+  .pin-input-row { display: flex; justify-content: center; gap: 10px; margin: 14px 0 6px; }
+  .pin-digit {
+    width: 48px; height: 56px;
+    border: 2px solid #f0c8e0;
+    border-radius: 12px;
+    font-size: 1.4rem;
+    font-weight: 800;
+    text-align: center;
+    background: #fff5fa;
+    color: var(--text);
+    outline: none;
+    font-family: 'Nunito', sans-serif;
+    transition: border-color 0.2s;
+  }
+  .pin-digit:focus { border-color: var(--pink); }
+  .pin-hint-text { font-size: 0.78rem; color: #b07aa0; text-align: center; }
+  .wish-reveal {
+    display: none;
+    background: linear-gradient(135deg, #fff0f7, #f3f0ff);
+    border-radius: 18px;
+    padding: 20px;
+    text-align: center;
+    border: 1.5px dashed var(--lilac);
+    animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  @keyframes popIn { from{transform:scale(0.7);opacity:0;} to{transform:scale(1);opacity:1;} }
+  .wish-reveal .wish-emoji { font-size: 2.8rem; }
+  .wish-reveal h3 { font-family: 'Pacifico', cursive; font-size: 1.3rem; color: var(--pink); margin: 10px 0 8px; }
+  .wish-reveal p { font-size: 0.92rem; color: var(--text); line-height: 1.7; }
+
+  /* Footer */
+  .footer { text-align: center; padding: 20px 0; color: var(--soft); font-size: 0.85rem; font-weight: 700; }
+  .footer span { animation: heartbeat 1.2s infinite; display: inline-block; }
+  @keyframes heartbeat { 0%,100%{transform:scale(1);} 50%{transform:scale(1.3);} }
+
+  /* Birthday banner (shown on May 26) */
+  .bday-banner {
+    display: none;
+    background: linear-gradient(135deg, var(--pink), var(--peach));
+    color: white;
+    text-align: center;
+    padding: 14px;
+    font-family: 'Pacifico', cursive;
+    font-size: 1.2rem;
+    border-radius: 18px;
+    margin-bottom: 20px;
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.02);} }
+
+  button:focus { outline: 2px solid var(--pink); outline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<div class="floaters" id="floaters"></div>
+<div class="confetti-wrap" id="confetti"></div>
+
+<div class="page">
+  <div class="hero">
+    <span class="hero-emoji">🎈</span>
+    <h1>Hey Gole!</h1>
+    <p>Someone made this just for you ✨</p>
+  </div>
+
+  <!-- Birthday Banner (shows on May 26) -->
+  <div class="bday-banner" id="bdayBanner">🎂 IT'S YOUR BIRTHDAY TODAY! 🎂</div>
+
+  <!-- Countdown -->
+  <div class="card">
+    <div class="card-title">⏳ Countdown to your day!</div>
+    <div class="countdown-grid">
+      <div class="countdown-item"><div class="countdown-num" id="cd-days">--</div><div class="countdown-label">Days</div></div>
+      <div class="countdown-item"><div class="countdown-num" id="cd-hours">--</div><div class="countdown-label">Hours</div></div>
+      <div class="countdown-item"><div class="countdown-num" id="cd-mins">--</div><div class="countdown-label">Mins</div></div>
+      <div class="countdown-item"><div class="countdown-num" id="cd-secs">--</div><div class="countdown-label">Secs</div></div>
+    </div>
+  </div>
+
+  <!-- Music Player -->
+  <div class="card">
+    <div class="card-title">🎵 Your Birthday Song</div>
+    <div class="player">
+      <button class="play-btn" id="playBtn" aria-label="Play birthday song" onclick="togglePlay()">▶️</button>
+      <div class="player-info">
+        <div class="player-title">Happy Birthday, Gole 🎂</div>
+        <div class="player-sub">Your special tune is waiting!</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+    </div>
+    <p class="player-note">🎶 Press play to fill the world with birthday vibes!</p>
+    <audio id="bdAudio" loop>
+      <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+  </div>
+
+  <!-- Quiz -->
+  <div class="card">
+    <div class="card-title">💕 How well do you know us?</div>
+    <div class="quiz-progress" id="quizDots"></div>
+    <div class="quiz-question" id="quizQ"></div>
+    <div class="quiz-options" id="quizOpts"></div>
+    <button class="quiz-next" id="quizNext" onclick="nextQuestion()">Next question →</button>
+    <div class="quiz-result" id="quizResult" style="display:none;"></div>
+  </div>
+
+  <!-- Unlock Wish -->
+  <div class="card">
+    <div class="card-title">🔒 Unlock your secret wish!</div>
+    <div class="lock-area" id="lockArea">
+      <div class="lock-icon" onclick="focusPin()" aria-label="Locked gift" role="button" tabindex="0">🔒</div>
+      <div class="lock-hint">Enter the secret 4-digit code to unlock!</div>
+      <div class="pin-input-row">
+        <input class="pin-digit" id="p0" maxlength="1" type="number" min="0" max="9" inputmode="numeric" oninput="onPin(0)" />
+        <input class="pin-digit" id="p1" maxlength="1" type="number" min="0" max="9" inputmode="numeric" oninput="onPin(1)" />
+        <input class="pin-digit" id="p2" maxlength="1" type="number" min="0" max="9" inputmode="numeric" oninput="onPin(2)" />
+        <input class="pin-digit" id="p3" maxlength="1" type="number" min="0" max="9" inputmode="numeric" oninput="onPin(3)" />
+      </div>
+      <div class="pin-hint-text">Hint: her birthday month & day (MMDD) 💡</div>
+    </div>
+    <div class="wish-reveal" id="wishReveal">
+      <div class="wish-emoji">🎁✨🎂</div>
+      <h3>Happy Birthday, my Gole!</h3>
+      <p>You unlocked it! 🎉<br><br>
+      I hope this day wraps you in all the joy, laughter, and love you deserve. 
+      Every moment with you is a gift I never want to return. 
+      Here's to you — the most wonderful person in my world. 
+      I love you more than all the stars and balloons in the sky! 🎈⭐<br><br>
+      Happy Birthday, Gole! 💖</p>
+    </div>
+  </div>
+
+  <div class="footer">Made with <span>💖</span> just for Gole</div>
+</div>
+
+<script>
+// Floating emojis
+const emojis = ['🎈','⭐','🌸','🎀','✨','🎊','💕','🌟','🎂','🍭'];
+const fl = document.getElementById('floaters');
+for(let i=0;i<18;i++){
+  const d=document.createElement('div');
+  d.className='floater';
+  d.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+  d.style.left=Math.random()*100+'%';
+  d.style.animationDuration=(7+Math.random()*10)+'s';
+  d.style.animationDelay=(Math.random()*10)+'s';
+  d.style.fontSize=(1+Math.random()*1.5)+'rem';
+  fl.appendChild(d);
+}
+
+// Countdown
+function updateCountdown(){
+  const now=new Date();
+  const bday=new Date(now.getFullYear(),4,26); // May 26
+  if(now>bday) bday.setFullYear(bday.getFullYear()+1);
+  const diff=bday-now;
+  if(diff<=0){
+    document.getElementById('bdayBanner').style.display='block';
+    document.getElementById('cd-days').textContent='🎂';
+    document.getElementById('cd-hours').textContent='🎂';
+    document.getElementById('cd-mins').textContent='🎂';
+    document.getElementById('cd-secs').textContent='🎂';
+    launchConfetti();
+    return;
+  }
+  const days=Math.floor(diff/86400000);
+  const hours=Math.floor((diff%86400000)/3600000);
+  const mins=Math.floor((diff%3600000)/60000);
+  const secs=Math.floor((diff%60000)/1000);
+  document.getElementById('cd-days').textContent=String(days).padStart(2,'0');
+  document.getElementById('cd-hours').textContent=String(hours).padStart(2,'0');
+  document.getElementById('cd-mins').textContent=String(mins).padStart(2,'0');
+  document.getElementById('cd-secs').textContent=String(secs).padStart(2,'0');
+}
+updateCountdown();
+setInterval(updateCountdown,1000);
+
+// Confetti
+function launchConfetti(){
+  const colors=['#ff6fb0','#ffb347','#ffe066','#7ee8c2','#c9aaff','#ff9de2'];
+  const wrap=document.getElementById('confetti');
+  for(let i=0;i<60;i++){
+    const c=document.createElement('div');
+    c.className='conf';
+    c.style.left=Math.random()*100+'%';
+    c.style.background=colors[Math.floor(Math.random()*colors.length)];
+    c.style.animationDelay=(Math.random()*1.5)+'s';
+    c.style.animationDuration=(1.5+Math.random()*1.5)+'s';
+    c.style.transform='rotate('+Math.random()*360+'deg)';
+    wrap.appendChild(c);
+    setTimeout(()=>c.remove(),4000);
+  }
+}
+
+// Music player
+let playing=false;
+let progInterval=null;
+let progVal=0;
+function togglePlay(){
+  const audio=document.getElementById('bdAudio');
+  const btn=document.getElementById('playBtn');
+  const fill=document.getElementById('progressFill');
+  if(!playing){
+    audio.play().catch(()=>{});
+    btn.textContent='⏸️';
+    playing=true;
+    progInterval=setInterval(()=>{
+      progVal=(progVal+0.3)%100;
+      fill.style.width=progVal+'%';
+    },200);
+  } else {
+    audio.pause();
+    btn.textContent='▶️';
+    playing=false;
+    clearInterval(progInterval);
+  }
+}
+
+// Quiz
+const questions=[
+  { q:"What's a nickname your partner might call you?", opts:["Sunshine","Babe","My world","All of the above"], a:3 },
+  { q:"What's the best surprise ever?", opts:["A birthday website just for me!","Flowers","Cake","A trip"], a:0 },
+  { q:"On a cozy day, you'd rather...", opts:["Watch movies together","Cook together","Go on a walk","Stargaze together"], a:3 },
+  { q:"What does love feel like?", opts:["Warm like sunlight","Safe like home","Fun like an adventure","All of the above! 💕"], a:3 },
+  { q:"What makes this relationship special?", opts:["The laughs","The care","The little moments","Everything 🥰"], a:3 }
+];
+let qIdx=0, score=0, answered=false;
+
+function buildDots(){
+  const d=document.getElementById('quizDots');
+  d.innerHTML='';
+  questions.forEach((_,i)=>{
+    const dot=document.createElement('div');
+    dot.className='quiz-dot'+(i<qIdx?' done':'');
+    d.appendChild(dot);
+  });
+}
+
+function showQuestion(){
+  answered=false;
+  const q=questions[qIdx];
+  document.getElementById('quizQ').textContent=(qIdx+1)+'. '+q.q;
+  const opts=document.getElementById('quizOpts');
+  opts.innerHTML='';
+  q.opts.forEach((o,i)=>{
+    const btn=document.createElement('button');
+    btn.className='quiz-opt';
+    btn.textContent=o;
+    btn.onclick=()=>answer(i,btn);
+    opts.appendChild(btn);
+  });
+  document.getElementById('quizNext').style.display='none';
+  buildDots();
+}
+
+function answer(i, btn){
+  if(answered) return;
+  answered=true;
+  const q=questions[qIdx];
+  const opts=document.getElementById('quizOpts');
+  Array.from(opts.children).forEach((b,idx)=>{
+    b.disabled=true;
+    if(idx===q.a) b.classList.add('correct');
+    else if(idx===i && i!==q.a) b.classList.add('wrong');
+  });
+  if(i===q.a){ score++; launchConfetti(); }
+  if(qIdx<questions.length-1){
+    document.getElementById('quizNext').style.display='block';
+  } else {
+    setTimeout(showResult,900);
+  }
+}
+
+function nextQuestion(){
+  qIdx++;
+  showQuestion();
+}
+
+function showResult(){
+  document.getElementById('quizQ').style.display='none';
+  document.getElementById('quizOpts').style.display='none';
+  document.getElementById('quizNext').style.display='none';
+  document.getElementById('quizDots').style.display='none';
+  const r=document.getElementById('quizResult');
+  r.style.display='block';
+  const msgs=["Keep playing to learn more! 💕","You're getting there! 🌸","Pretty good! 💖","Great match! ✨","Perfect soulmates! 💕🎉"];
+  r.innerHTML='<div class="score">'+score+'/'+questions.length+'</div><p>'+msgs[score]+'</p>';
+  if(score===questions.length) launchConfetti();
+}
+
+showQuestion();
+
+// PIN unlock — the secret code is 0526 (May 26)
+const SECRET='0526';
+function focusPin(){ document.getElementById('p0').focus(); }
+function onPin(idx){
+  const el=document.getElementById('p'+idx);
+  const val=el.value.replace(/[^0-9]/g,'');
+  el.value=val.slice(-1);
+  if(val && idx<3) document.getElementById('p'+(idx+1)).focus();
+  checkPin();
+}
+function checkPin(){
+  let code='';
+  for(let i=0;i<4;i++) code+=document.getElementById('p'+i).value;
+  if(code.length===4){
+    if(code===SECRET){
+      document.getElementById('lockArea').style.display='none';
+      document.getElementById('wishReveal').style.display='block';
+      launchConfetti();
+      setTimeout(launchConfetti,800);
+    } else {
+      for(let i=0;i<4;i++){
+        const el=document.getElementById('p'+i);
+        el.style.borderColor='#f87171';
+        setTimeout(()=>{ el.style.borderColor=''; el.value=''; },700);
+      }
+      setTimeout(()=>document.getElementById('p0').focus(),750);
+    }
+  }
+}
+// Allow Enter key on pin
+document.querySelectorAll('.pin-digit').forEach(el=>{
+  el.addEventListener('keydown',e=>{ if(e.key==='Backspace'&&!el.value){ const idx=parseInt(el.id.slice(1)); if(idx>0) document.getElementById('p'+(idx-1)).focus(); } });
+});
+</script>
+</body>
+</html>
